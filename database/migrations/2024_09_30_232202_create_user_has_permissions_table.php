@@ -15,6 +15,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->foreignUuid('user_id')->constrained("users")->onDelete("cascade");
             $table->foreignUuid('permission_id')->constrained("permissions")->onDelete("cascade");
+            $table->softDeletes();
             $table->timestamps();
         });
     }

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->string('role');
             $table->string('desc')->nullable();
-            
+            $table->softDeletes();
             $table->timestamps();
         });
     }

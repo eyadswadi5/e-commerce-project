@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('permission');
             $table->string('desc')->nullable();
             $table->string('guard')->nullable();
-
+            $table->softDeletes();
             $table->timestamps();
         });
     }

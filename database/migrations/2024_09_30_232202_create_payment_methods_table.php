@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('type');
             $table->json('details')->encrypted();
             $table->boolean('is_primary')->default(false);
-
+            $table->softDeletes();
             $table->timestamps();
         });
     }

@@ -18,7 +18,7 @@ return new class extends Migration
             $table->integer('rating')->default(1)->min(1)->max(5);
             $table->text('comment');
             $table->boolean('approved')->default(false);
-
+            $table->softDeletes();
             $table->timestamps();
         });
     }

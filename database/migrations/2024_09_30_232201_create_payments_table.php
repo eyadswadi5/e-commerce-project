@@ -19,7 +19,7 @@ return new class extends Migration
             $table->enum('payment_status', ['pending', 'completed', 'failed']);
             $table->string('transaction_id');
             $table->decimal('amount', 10, 2);
-
+            $table->softDeletes();
             $table->timestamps();
         });
     }

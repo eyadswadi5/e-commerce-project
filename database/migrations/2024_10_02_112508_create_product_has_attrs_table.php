@@ -11,10 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('categories', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->string('name');
-            $table->text('description')->nullable();
+        Schema::create('product_has_attrs', function (Blueprint $table) {
+            $table->Uuid()->primary();
+            $table->foreignUuid("product_id")->constrained("products")->onDelete("cascade");
+            $table->string("attr");
+            $table->text("desc");
             $table->softDeletes();
             $table->timestamps();
         });
@@ -25,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('categories');
+        Schema::dropIfExists('product_has_attrs');
     }
 };

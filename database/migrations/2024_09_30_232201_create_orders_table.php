@@ -17,7 +17,7 @@ return new class extends Migration
             $table->decimal('total_amount', 10, 2);
             $table->enum('status', ['pending', 'processing', 'shipped', 'delivered', 'cancelled']);
             $table->foreignUuid('shipping_address_id')->constrained("addresses")->onDelete("cascade");
-        
+            $table->softDeletes();
             $table->timestamps();
         });
     }
