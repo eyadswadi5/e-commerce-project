@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 class BaseController extends Controller
 {
     // response template
-    public function rst($success = false, $statusCode =  500,$message = "", $errors = null, $data = null) {
+    public function rst($success = false, $statusCode =  500,$message = null, $errors = null, $data = null) {
         $response = [
             "success" => $success,
             "message" => $message,
