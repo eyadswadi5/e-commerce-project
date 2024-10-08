@@ -61,7 +61,7 @@ class PHPMailerService {
         try {
             $this->mail->addAddress("$user->email", $user->name);
             $this->mail->Subject = 'Reset your password';
-            $verificationLink = url('/password/reset/' . $token);
+            $verificationLink = url('/api/password/reset/' . $token);
             $this->mail->Body = "Click the following link to reset your password: $verificationLink";
             $this->mail->send();
         } catch (Exception $e) {

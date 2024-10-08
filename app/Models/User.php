@@ -24,7 +24,12 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
      * @var array<int, string>
      */
     protected $fillable = [
-        'name', 'email', 'phone_number', 'password', 'role_id', 'email_verified_at',
+        'name',
+        'email',
+        'phone_number',
+        'password',
+        'role_id',
+        'email_verified_at',
     ];
 
     /**
@@ -84,8 +89,29 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
         return ['id'];
     }
 
-    public function role() {
+    public function role()
+    {
         $role = Role::find($this->role_id);
         return $role;
+    }
+
+    public function permissions()
+    {
+        $permissions = Permission::join("user_has_permissions", "permissions.id", "=", "user_has_permissions.permission_id")
+            ->where("user_has_permissions.user_id", "=", $this->id)
+            ->select("permissions.*")
+            ->get();
+
+        return $permissions;
+    }
+
+    public function is_permitted(string $permissionToCheck) : bool {
+        $permissions = $this->permissions();
+        $permitted = false;
+        foreach($permissions as $p)
+            if ($permissionToCheck == $p->permission)
+                $permitted = true;
+
+        return $permitted;
     }
 }
