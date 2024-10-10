@@ -12,7 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('product_has_attrs', function (Blueprint $table) {
-            $table->Uuid()->primary();
+            $table->unique(["product_id", "attr"]);
+            $table->uuid("id")->primary();
             $table->foreignUuid("product_id")->constrained("products")->onDelete("cascade");
             $table->string("attr");
             $table->text("desc");

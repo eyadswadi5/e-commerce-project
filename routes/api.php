@@ -21,7 +21,18 @@ Route::group(["namespace" => "App\Http\Controllers", "middleware" => "api"], fun
         Route::get("/user/{user_id}", "api\PermissionController@user_has_permissions")->name("permission.user.list");
         Route::put("/role/{role_id}/add", "api\PermissionController@add_role_permissions")->name("permission.role.add");
         Route::put("/user/{user_id}/add", "api\PermissionController@add_user_permissions")->name("permission.user.add");
-        Route::put("/role/{role_id}/remove", "api\PermissionController@remove_role_permissions")->name("permission.role.remove");
-        Route::put("/user/{user_id}/remove", "api\PermissionController@remove_user_permissions")->name("permission.user.remove");
+        Route::delete("/role/{role_id}/remove", "api\PermissionController@remove_role_permissions")->name("permission.role.remove");
+        Route::delete("/user/{user_id}/remove", "api\PermissionController@remove_user_permissions")->name("permission.user.remove");
+    });
+
+    Route::group(["prefix" => "product"], function () {
+        Route::get("/", "api\ProductController@index")->name("product.index");
+        Route::get("/{product_id}", "api\ProductController@find")->name("product.find");
+    });
+
+    Route::group(["prefix" => "admin/product", "middleware" => ["auth:api"]], function () {
+        Route::post("/", "api\ProductController@store")->name("product.store");
+        Route::put("/{product_id}", "api\ProductController@update")->name("product.update");
+        Route::delete("/{product_id}", "api\ProductController@delete")->name("product.delete");
     });
 });
