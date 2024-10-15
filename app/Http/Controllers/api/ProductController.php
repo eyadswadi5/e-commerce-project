@@ -5,6 +5,7 @@ namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Product;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -52,6 +53,8 @@ class ProductController extends BaseController
             ];
             return $this->rst(true, 200, null, null, ["product" => $product]);
         } catch (QueryException $e) {
+            return $this->rst(false, 422, "Failed to fetch product details", [["message" => "database error occurres"]]);
+        } catch (ModelNotFoundException $e) {
             return $this->rst(false, 422, "Failed to fetch product details", [["message" => "product not found"]]);
         }
     }
@@ -161,10 +164,14 @@ class ProductController extends BaseController
 
     public function delete(string $product_id) {
         try {
-            Product::destroy($product_id);
+            // Product::destroy($product_id);
+            $product = Product::findOrFail($product_id);
+            $product->delete();
             return $this->rst(true, 200, "product deleted");
         } catch (QueryException $e) {
             return $this->rst(false, 500, "failed deleting product", [["message" => "database error occurres"]]);
+        } catch (ModelNotFoundException $e) {
+            return $this->rst(false, 422, "failed deleting product", [["message" => "product not found"]]);
         }
     }
 }

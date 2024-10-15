@@ -30,9 +30,31 @@ Route::group(["namespace" => "App\Http\Controllers", "middleware" => "api"], fun
         Route::get("/{product_id}", "api\ProductController@find")->name("product.find");
     });
 
-    Route::group(["prefix" => "admin/product", "middleware" => ["auth:api"]], function () {
+    Route::group(["prefix" => "admin/product", "middleware" => ["auth:api", "is-permitted"]], function () {
         Route::post("/", "api\ProductController@store")->name("product.store");
         Route::put("/{product_id}", "api\ProductController@update")->name("product.update");
         Route::delete("/{product_id}", "api\ProductController@delete")->name("product.delete");
+    });
+
+    Route::group(["prefix" => "category"], function () {
+        Route::get("/", "api\CategoryController@index")->name("category.index");
+    });
+
+    Route::group(["prefix"=>"admin/category", "middleware" => ["auth:api"]], function () {
+        Route::post("/", "api\CategoryController@store")->name("category.store");
+        Route::put("/{id}", "api\CategoryController@update")->name("category.update");
+        Route::delete("/{id}", "api\CategoryController@destroy")->name("category.delete");
+        Route::get("/{id}", "api\CategoryController@show")->name("category.show");
+    });
+
+    Route::group(["prefix" => "company"], function () {
+        Route::get("/", "api\CompanyController@index")->name("company.index");
+    });
+
+    Route::group(["prefix"=>"admin/company", "middleware" => ["auth:api"]], function () {
+        Route::post("/", "api\CompanyController@store")->name("company.store");
+        Route::put("/{id}", "api\CompanyController@update")->name("company.update");
+        Route::delete("/{id}", "api\CompanyController@destroy")->name("company.delete");
+        Route::get("/{id}", "api\CompanyController@show")->name("company.show");
     });
 });
