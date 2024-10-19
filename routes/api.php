@@ -51,10 +51,20 @@ Route::group(["namespace" => "App\Http\Controllers", "middleware" => "api"], fun
         Route::get("/", "api\CompanyController@index")->name("company.index");
     });
 
-    Route::group(["prefix"=>"admin/company", "middleware" => ["auth:api"]], function () {
+    Route::group(["prefix"=>"admin/company", "middleware" => ["auth:api", "is-permitted"]], function () {
         Route::post("/", "api\CompanyController@store")->name("company.store");
         Route::put("/{id}", "api\CompanyController@update")->name("company.update");
         Route::delete("/{id}", "api\CompanyController@destroy")->name("company.delete");
         Route::get("/{id}", "api\CompanyController@show")->name("company.show");
+    });
+
+    Route::group(["prefix" => "cart", "middleware" => "auth:api"], function () {
+        Route::get("/", "api\CartController@index")->name("cart.index");
+        Route::post("/", "api\CartController@add_item")->name("cart.add-item");
+        Route::put("/item/{item_id}", "api\CartController@update_item")->name("cart.update-item");
+        Route::delete("/item/{item_id}", "api\CartController@delete_item")->name("cart.delete");
+        Route::post("/create", "api\CartController@create_cart")->name("cart.create");
+        Route::delete("/clear", "api\CartController@clear_cart")->name("cart.clear");
+        
     });
 });

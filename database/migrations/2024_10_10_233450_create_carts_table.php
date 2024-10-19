@@ -16,6 +16,7 @@ return new class extends Migration
 
             $table->foreignUuid("user_id")->constrained("users")->onDelete("cascade");
             $table->float("total");
+            $table->enum("status", ["pending", "complete", "checked out"])->default("pending");
 
             $table->softDeletes();
             $table->timestamps();
