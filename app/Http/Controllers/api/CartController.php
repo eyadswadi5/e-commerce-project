@@ -7,11 +7,13 @@ use App\Models\Cart;
 use App\Models\CartItem;
 use App\Models\Product;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Tymon\JWTAuth\Exceptions\JWTException;
+use Tymon\JWTAuth\Exceptions\UserNotDefinedException;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class CartController extends BaseController
@@ -28,7 +30,9 @@ class CartController extends BaseController
             // dd($cartItems);
             return $this->rst(false, 200, null, null, ["cart" => $cart, "items" => $cartItems]);
         } catch (JWTException $e) {
-            return $this->rst(false, 403, "Failed to fetch cart");
+            return $this->rst(false, 401, "Failed to fetch cart", [["message" => "something wrong with authenticating the user", "error" => $e]]);
+        } catch (UserNotDefinedException $e) {
+            return $this->rst(false, 401, "Failed to fetch cart", [["message" => "user not found", "error" => $e]]);
         } catch (QueryException $e) {
             return $this->rst(false, 500, "Failed to fetch cart", [["message" => "database error occurres", "error" => $e]]);
         }
@@ -66,8 +70,12 @@ class CartController extends BaseController
             ]);
             $cart->calculateTotal();
             return $this->rst(true, 200, "item added");
+        } catch (ModelNotFoundException $e) {
+            return $this->rst(false, 422, "Failed to add item", [["message" => "product not found"]]);
         } catch (JWTException $e) {
-            return $this->rst(false, 401, "Failed to add item", [["message" => "user not find", "error" => $e]]);
+            return $this->rst(false, 401, "Failed to add item", [["message" => "something wrong with authenticating the user", "error" => $e]]);
+        } catch (UserNotDefinedException $e) {
+            return $this->rst(false, 401, "Failed to add item", [["message" => "user not found", "error" => $e]]);
         } catch (QueryException $e) {
             return $this->rst(false, 500, "Failed to add item", [["message" => "database error occurres", "error" => $e]]);
         }
@@ -98,7 +106,9 @@ class CartController extends BaseController
             $cart->calculateTotal();
             return $this->rst(true, 200, "item updated");
         } catch (JWTException $e) {
-            return $this->rst(false, 401, "Failed to update item", [["message" => "user not find", "error" => $e]]);
+            return $this->rst(false, 401, "Failed to update item", [["message" => "something wrong with authenticating the user", "error" => $e]]);
+        } catch (UserNotDefinedException $e) {
+            return $this->rst(false, 401, "Failed to update item", [["message" => "user not found", "error" => $e]]);
         } catch (QueryException $e) {
             return $this->rst(false, 500, "Failed to update item", [["message" => "database error occurres", "error" => $e]]);
         }
@@ -122,7 +132,9 @@ class CartController extends BaseController
             $cart->calculateTotal();
             return $this->rst(true, 200, "item deleted");
         } catch (JWTException $e) {
-            return $this->rst(false, 401, "Failed to delete item", [["message" => "user not find", "error" => $e]]);
+            return $this->rst(false, 401, "Failed to delete item", [["message" => "something wrong with authenticating the user", "error" => $e]]);
+        } catch (UserNotDefinedException $e) {
+            return $this->rst(false, 401, "Failed to delete item", [["message" => "user not found", "error" => $e]]);
         } catch (QueryException $e) {
             return $this->rst(false, 500, "Failed to delete item", [["message" => "database error occurres", "error" => $e]]);
         }
@@ -179,6 +191,8 @@ class CartController extends BaseController
             $cart->total = $ctotal;
             $cart->save();
         } catch (JWTException $e) {
+            return $this->rst(false, 401, "Failed to create cart", [["message" => "something wrong with authenticating the user", "error" => $e]]);
+        } catch (UserNotDefinedException $e) {
             return $this->rst(false, 401, "Failed to create cart", [["message" => "user not found", "error" => $e]]);
         } catch (QueryException $e) {
             return $this->rst(false, 500, "Failed to create cart", [["message" => "database error occurres", "error" => $e]]);
@@ -202,6 +216,8 @@ class CartController extends BaseController
             $cart->save();
             return $this->rst(true, 200, "cart cleared");
         } catch (JWTException $e) {
+            return $this->rst(false, 401, "Failed to clear cart", [["message" => "something wrong with authenticating the user", "error" => $e]]);
+        } catch (UserNotDefinedException $e) {
             return $this->rst(false, 401, "Failed to clear cart", [["message" => "user not found", "error" => $e]]);
         } catch (QueryException $e) {
             return $this->rst(false, 500, "Failed to clear cart", [["message" => "database error occurres", "error" => $e]]);

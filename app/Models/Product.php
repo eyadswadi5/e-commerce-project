@@ -20,4 +20,9 @@ class Product extends BaseModel
         return $company;
     }
 
+    public function reviews() {
+        $reviews = Review::where("product_id", "=", $this->id)->get(["id", "rating", "comment", "approved"]);
+        return $reviews;
+    }
+
 }

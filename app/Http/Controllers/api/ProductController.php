@@ -50,6 +50,7 @@ class ProductController extends BaseController
                 "quantity" => $product->stock_quantity,
                 "company" => $product->company()->name,
                 "attrs" => $product->attrs(),
+                "reviews" => $product->reviews(),
             ];
             return $this->rst(true, 200, null, null, ["product" => $product]);
         } catch (QueryException $e) {
@@ -157,6 +158,8 @@ class ProductController extends BaseController
                 ->upsert($attrs, ["product_id", "attr"], ["desc"]);
 
             return $this->rst(true, 200, "product updated");
+        } catch (ModelNotFoundException $e) {
+            return $this->rst(false, 500, "Failed to update product", [["message" => "product not found"]]);
         } catch (QueryException $e) {
             return $this->rst(false, 500, "Failed to update product", [["message" => "database error occurres", "errorMessage" => $e]]);
         }

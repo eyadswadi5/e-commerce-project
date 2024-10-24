@@ -7,7 +7,7 @@ Route::group(["namespace" => "App\Http\Controllers", "middleware" => "api"], fun
 
     Route::post("/password/forget", "ResetPasswordController@sendResetLink")->name("password.send-reset-link");
     Route::put("/password/reset/{token}", "ResetPasswordController@resetPassword")->name("password.reset");
-    
+
     Route::group(["prefix" => "auth"], function () {
         Route::post("register", "api\AuthController@register")->name("auth.register");
         Route::post("login", "api\AuthController@login")->name("auth.login");
@@ -28,6 +28,10 @@ Route::group(["namespace" => "App\Http\Controllers", "middleware" => "api"], fun
     Route::group(["prefix" => "product"], function () {
         Route::get("/", "api\ProductController@index")->name("product.index");
         Route::get("/{product_id}", "api\ProductController@find")->name("product.find");
+        //reviews
+        Route::get("/{product_id}/reviews", "api\ReviewController@index")->name("product.review.index");
+        Route::post("/{product_id}/reviews", "api\ReviewController@store")
+            ->name("product.review.store")->middleware("auth:api");
     });
 
     Route::group(["prefix" => "admin/product", "middleware" => ["auth:api", "is-permitted"]], function () {
@@ -40,7 +44,7 @@ Route::group(["namespace" => "App\Http\Controllers", "middleware" => "api"], fun
         Route::get("/", "api\CategoryController@index")->name("category.index");
     });
 
-    Route::group(["prefix"=>"admin/category", "middleware" => ["auth:api"]], function () {
+    Route::group(["prefix" => "admin/category", "middleware" => ["auth:api", "is-permitted"]], function () {
         Route::post("/", "api\CategoryController@store")->name("category.store");
         Route::put("/{id}", "api\CategoryController@update")->name("category.update");
         Route::delete("/{id}", "api\CategoryController@destroy")->name("category.delete");
@@ -51,7 +55,7 @@ Route::group(["namespace" => "App\Http\Controllers", "middleware" => "api"], fun
         Route::get("/", "api\CompanyController@index")->name("company.index");
     });
 
-    Route::group(["prefix"=>"admin/company", "middleware" => ["auth:api", "is-permitted"]], function () {
+    Route::group(["prefix" => "admin/company", "middleware" => ["auth:api", "is-permitted"]], function () {
         Route::post("/", "api\CompanyController@store")->name("company.store");
         Route::put("/{id}", "api\CompanyController@update")->name("company.update");
         Route::delete("/{id}", "api\CompanyController@destroy")->name("company.delete");
@@ -65,6 +69,10 @@ Route::group(["namespace" => "App\Http\Controllers", "middleware" => "api"], fun
         Route::delete("/item/{item_id}", "api\CartController@delete_item")->name("cart.delete");
         Route::post("/create", "api\CartController@create_cart")->name("cart.create");
         Route::delete("/clear", "api\CartController@clear_cart")->name("cart.clear");
-        
+    });
+
+    Route::group(["prefix" => "admin/reviews", "middleware" => ["auth:api", "is-permitted"]], function() {
+        Route::put("/{review_id}/approve", "api\ReviewController@approve")->name("review.approve");
+        Route::delete("/{review_id}", "api\ReviewController@delete")->name("review.delete");
     });
 });

@@ -24,9 +24,11 @@ class CartTableSeeder extends Seeder
             $role = Role::where("role", "=", "user")->first();
             $query->where("role_id", "=", $role->id);
         })->get();
+
         $products = Product::all();
         $faker = Factory::create();
         $status = ["complete", "checked out"];
+
         foreach(range(1, 100) as $index) {
             $user = $users->random();
             $items = $products->random(rand(1, 10));
@@ -48,10 +50,10 @@ class CartTableSeeder extends Seeder
                     "quantity" => $quantity,
                     "total" => $totalPrice,
                 ];
-                $cartItems += $cartItem;
+                $cartItems[] = $cartItem;
                 $total += $totalPrice;
             }
-            CartItem::create($cartItems);
+            CartItem::insert($cartItems);
             $cart->total = $total;
             $cart->save();
         }

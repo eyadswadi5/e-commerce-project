@@ -8,6 +8,7 @@ use App\Models\Role;
 use App\Models\User;
 use Exception;
 use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Routing\RouteCollection;
@@ -56,6 +57,8 @@ class PermissionController extends BaseController
                 ]
             ];
             return $this->rst(true, 200, null, null, $result);
+        } catch (ModelNotFoundException $e) {
+            return $this->rst(false, 422, "Failed to get role permissions", [["message" => "role not found"]]);
         } catch (QueryException $e) {
             return $this->rst(false, 500, "Failed to get role permissions", [["message" => "database error occurres"]]);
         } catch (Exception $e) {
@@ -85,6 +88,8 @@ class PermissionController extends BaseController
                 ]
             ];
             return $this->rst(true, 200, null, null, $result);
+        } catch (ModelNotFoundException $e) {
+            return $this->rst(false, 422, "Failed to get user permissions", [["message" => "user not found"]]);
         } catch (QueryException $e) {
             return $this->rst(false, 500, "Failed to get user permissions", [["message" => "database error occurres"]]);
         } catch (Exception $e) {
@@ -121,6 +126,8 @@ class PermissionController extends BaseController
             }
 
             return $this->rst(true, 201, "role permissions added successfully");
+        } catch (ModelNotFoundException $e) {
+            return $this->rst(false, 422, "Failed to add role permissions", [["message" => "role not found"]]);
         } catch (QueryException $e) {
             return $this->rst(false, 500, "Failed to add role permissions", [["message" => "database error occurres"]]);
         } catch (Exception $e) {
@@ -157,6 +164,8 @@ class PermissionController extends BaseController
             }
 
             return $this->rst(true, 201, "user permissions added successfully");
+        } catch (ModelNotFoundException $e) {
+            return $this->rst(false, 422, "Failed to add user permissions", [["message" => "user not found"]]);
         } catch (QueryException $e) {
             return $this->rst(false, 500, "Failed to add user permissions", [["message" => "database error occurres"]]);
         } catch (Exception $e) {
@@ -179,6 +188,8 @@ class PermissionController extends BaseController
                 ->whereIn("permission_id", $request->permissions)
                 ->delete();
             return $this->rst(true, 200, "role permissions deleted successfully");
+        } catch (ModelNotFoundException $e) {
+            return $this->rst(false, 422, "Failed to delete role permissions", [["message" => "role not found"]]);
         } catch (QueryException $e) {
             return $this->rst(false, 500, "Failed to delete role permissions", [["message" => "database error occurres"]]);
         }
@@ -199,6 +210,8 @@ class PermissionController extends BaseController
                 ->whereIn("permission_id", $request->permissions)
                 ->delete();
             return $this->rst(true, 200, "user permissions deleted successfully");
+        } catch (ModelNotFoundException $e) {
+            return $this->rst(false, 422, "Failed to delete user permissions", [["message" => "user not found"]]);
         } catch (QueryException $e) {
             return $this->rst(false, 500, "Failed to delete user permissions", [["message" => "database error occurres"]]);
         }
